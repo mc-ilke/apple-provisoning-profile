@@ -41,9 +41,10 @@
         <a href="#overview" class="hover:text-blue-600">Overview</a>
         <a href="#profiles" class="hover:text-blue-600">Profile Types</a>
         <a href="#manual" class="hover:text-blue-600">Manual Steps</a>
+        <a href="#capabilities" class="hover:text-blue-600">Capabilities</a>
         <a href="#ci" class="hover:text-blue-600">Team Workflows</a>
         <a href="#troubleshoot" class="hover:text-blue-600">Troubleshoot</a>
-        <a href="#resources" class="hover:text-blue-600">Docs</a>
+        <a href="#resources" class="hover:text-blue-600">Resources</a>
       </div>
     </nav>
   </header>
@@ -121,6 +122,59 @@
       </div>
     </section>
 
+    <!-- Device Registration -->
+    <section id="devices" class="mt-16 fade-in">
+      <h2 class="text-3xl md:text-4xl font-black tracking-tight">Device Registration (The "Where")</h2>
+      <p class="mt-4 text-slate-700 dark:text-slate-300 max-w-3xl">
+        For Development and Ad Hoc profiles, you must register specific devices by their unique device identifier (UDID). Only registered devices can install and run your app.
+      </p>
+
+      <div class="mt-8 grid md:grid-cols-2 gap-8">
+        <div class="card p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+          <h3 class="text-lg font-bold mb-4">How to Find Device UDID</h3>
+          <div class="space-y-3 text-sm">
+            <div>
+              <strong class="text-blue-600">Method 1: Via Xcode</strong>
+              <p class="text-slate-600 dark:text-slate-400 mt-1">Connect device → Window → Devices and Simulators → Select device → Copy "Identifier"</p>
+            </div>
+            <div>
+              <strong class="text-blue-600">Method 2: Via Finder</strong>
+              <p class="text-slate-600 dark:text-slate-400 mt-1">Connect device → Open Finder → Select device in sidebar → Click device name to reveal UDID</p>
+            </div>
+            <div>
+              <strong class="text-blue-600">Method 3: Terminal</strong>
+              <p class="text-slate-600 dark:text-slate-400 mt-1"><code class="prose-code bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded">system_profiler SPUSBDataType | grep "Serial Number"</code></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+          <h3 class="text-lg font-bold mb-4">Device Limits</h3>
+          <div class="space-y-2 text-sm">
+            <div class="flex justify-between">
+              <span>iPhone/iPad/iPod touch:</span>
+              <span class="font-semibold">100 devices/year</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Apple Watch:</span>
+              <span class="font-semibold">100 devices/year</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Apple TV:</span>
+              <span class="font-semibold">100 devices/year</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Mac computers:</span>
+              <span class="font-semibold">100 devices/year</span>
+            </div>
+          </div>
+          <p class="mt-4 text-xs text-slate-600 dark:text-slate-400">
+            <strong>Note:</strong> Device registrations reset annually on your membership renewal date.
+          </p>
+        </div>
+      </div>
+    </section>
+
     <!-- Profile Types -->
     <section id="profiles" class="mt-16 fade-in">
       <h2 class="text-3xl md:text-4xl font-black tracking-tight">Provisioning Profile Types</h2>
@@ -152,16 +206,106 @@
         <p class="mt-3 text-slate-700 dark:text-slate-300 max-w-3xl">
           While Xcode can automate much of this, understanding the manual process on the Developer Portal is crucial for troubleshooting.
         </p>
-        <ol class="mt-4 list-decimal pl-6 space-y-2 text-slate-700 dark:text-slate-300">
-          <li>Open <em>Certificates, Identifiers & Profiles</em> → <strong>Profiles</strong> → <span class="kbd">+</span>.</li>
-          <li>Select the profile type (e.g., Development, Ad Hoc, App Store) and click <span class="kbd">Continue</span>.</li>
-          <li>Choose the correct **App ID** for your project. This App ID must already have the capabilities you need enabled on it.</li>
-          <li>Select a signing **Certificate**. The private key for this certificate must be installed in the Keychain of the machine that will build the app.</li>
-          <li>For Development or Ad Hoc profiles, select the registered devices you want to include.</li>
-          <li>Name the profile descriptively (e.g., "MyApp AdHoc Profile") and click **Generate**.</li>
-          <li>Download the profile and double-click it to install it in Xcode.</li>
-        </ol>
-      </section>
+
+        <div class="mt-8 grid md:grid-cols-2 gap-8">
+          <div class="card p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <h3 class="text-lg font-bold mb-4">Step-by-Step Process</h3>
+            <ol class="list-decimal pl-6 space-y-2 text-sm text-slate-700 dark:text-slate-300">
+              <li>Open <em>Certificates, Identifiers & Profiles</em> → <strong>Profiles</strong> → <span class="kbd">+</span></li>
+              <li>Select the profile type (e.g., Development, Ad Hoc, App Store) and click <span class="kbd">Continue</span></li>
+              <li>Choose the correct <strong>App ID</strong> for your project. This App ID must already have the capabilities you need enabled on it.</li>
+              <li>Select a signing <strong>Certificate</strong>. The private key for this certificate must be installed in the Keychain of the machine that will build the app.</li>
+              <li>For Development or Ad Hoc profiles, select the registered devices you want to include.</li>
+              <li>Name the profile descriptively (e.g., "MyApp AdHoc Profile") and click <strong>Generate</strong>.</li>
+              <li>Download the profile and double-click it to install it in Xcode.</li>
+            </ol>
+          </div>
+
+          <div class="card p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <h3 class="text-lg font-bold mb-4">Certificate Creation Process</h3>
+            <div class="space-y-3 text-sm">
+              <div>
+                <strong class="text-blue-600">1. Generate CSR in Keychain Access</strong>
+                <p class="text-slate-600 dark:text-slate-400 mt-1">Keychain Access → Certificate Assistant → Request a Certificate From a Certificate Authority</p>
+              </div>
+              <div>
+                <strong class="text-blue-600">2. Upload CSR to Apple</strong>
+                <p class="text-slate-600 dark:text-slate-400 mt-1">Developer Portal → Certificates → "+" → Choose type → Upload CSR file</p>
+              </div>
+              <div>
+                <strong class="text-blue-600">3. Download & Install</strong>
+                <p class="text-slate-600 dark:text-slate-400 mt-1">Download .cer file → Double-click to install in Keychain Access</p>
+              </div>
+            </div>
+          </div>
+        </div>
+    </section>
+
+    <!-- Common Capabilities -->
+    <section id="capabilities" class="mt-16 fade-in">
+      <h2 class="text-3xl md:text-4xl font-black tracking-tight">Common App Capabilities</h2>
+      <p class="mt-3 text-slate-700 dark:text-slate-300 max-w-3xl">
+        Understanding which capabilities your app needs and how to enable them correctly is essential for smooth development and deployment.
+      </p>
+
+      <div class="mt-8 grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="card p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+          <h4 class="font-bold text-blue-600">Push Notifications</h4>
+          <p class="text-xs mt-2 text-slate-600 dark:text-slate-400">Enables remote notifications from your server to the app.</p>
+          <div class="mt-3 text-xs">
+            <strong>Entitlement:</strong> <code class="prose-code bg-slate-100 dark:bg-slate-800 px-1 rounded">aps-environment</code>
+          </div>
+        </div>
+
+        <div class="card p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+          <h4 class="font-bold text-blue-600">App Groups</h4>
+          <p class="text-xs mt-2 text-slate-600 dark:text-slate-400">Share data between your main app and extensions (Today widgets, Share extensions, etc.).</p>
+          <div class="mt-3 text-xs">
+            <strong>Entitlement:</strong> <code class="prose-code bg-slate-100 dark:bg-slate-800 px-1 rounded">com.apple.security.application-groups</code>
+          </div>
+        </div>
+
+        <div class="card p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+          <h4 class="font-bold text-blue-600">Apple Pay</h4>
+          <p class="text-xs mt-2 text-slate-600 dark:text-slate-400">Process payments using Apple Pay within your app.</p>
+          <div class="mt-3 text-xs">
+            <strong>Entitlement:</strong> <code class="prose-code bg-slate-100 dark:bg-slate-800 px-1 rounded">com.apple.developer.in-app-payments</code>
+          </div>
+        </div>
+
+        <div class="card p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+          <h4 class="font-bold text-blue-600">Keychain Sharing</h4>
+          <p class="text-xs mt-2 text-slate-600 dark:text-slate-400">Share keychain data between multiple apps from the same developer.</p>
+          <div class="mt-3 text-xs">
+            <strong>Entitlement:</strong> <code class="prose-code bg-slate-100 dark:bg-slate-800 px-1 rounded">keychain-access-groups</code>
+          </div>
+        </div>
+
+        <div class="card p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+          <h4 class="font-bold text-blue-600">Background App Refresh</h4>
+          <p class="text-xs mt-2 text-slate-600 dark:text-slate-400">Keep your app updated with fresh content when it's not actively being used.</p>
+          <div class="mt-3 text-xs">
+            <strong>Entitlement:</strong> <code class="prose-code bg-slate-100 dark:bg-slate-800 px-1 rounded">com.apple.developer.background-modes</code>
+          </div>
+        </div>
+
+        <div class="card p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+          <h4 class="font-bold text-blue-600">Associated Domains</h4>
+          <p class="text-xs mt-2 text-slate-600 dark:text-slate-400">Enable universal links, handoff, and shared web credentials.</p>
+          <div class="mt-3 text-xs">
+            <strong>Entitlement:</strong> <code class="prose-code bg-slate-100 dark:bg-slate-800 px-1 rounded">com.apple.developer.associated-domains</code>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-8 p-6 rounded-2xl bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800">
+        <h4 class="font-bold text-yellow-800 dark:text-yellow-200">⚠️ Important Note</h4>
+        <p class="mt-2 text-sm text-yellow-700 dark:text-yellow-300">
+          When you enable a capability in Xcode, it must also be enabled on the corresponding App ID in the Developer Portal.
+          If there's a mismatch, you'll need to regenerate your provisioning profile to include the new entitlements.
+        </p>
+      </div>
+    </section>
 
     <!-- Team Workflows & CI/CD -->
     <section id="ci" class="mt-16 fade-in">
@@ -182,12 +326,54 @@
             <h3 class="text-lg font-bold">Team Workflow (Shared & Manual Signing)</h3>
             <p class="mt-2 text-slate-700 dark:text-slate-300">The industry standard for teams and CI/CD. This method uses a central, secure repository for signing assets.</p>
             <ul class="mt-3 list-disc pl-6 text-sm space-y-1 text-slate-600 dark:text-slate-400">
-              <li><strong>Method:</strong> Use tools like **Fastlane `match`** to create certificates and profiles and store them, encrypted, in a private Git repository.</li>
+              <li><strong>Method:</strong> Use tools like <strong>Fastlane `match`</strong> to create certificates and profiles and store them, encrypted, in a private Git repository.</li>
               <li><strong>Process:</strong> The CI server clones this repository, decrypts the assets, installs them in a temporary keychain, and then builds the app. This ensures every build is signed with the exact same identity.</li>
             </ul>
           </div>
         </div>
-      </section>
+
+        <!-- CI/CD Implementation Examples -->
+        <div class="mt-10">
+          <h3 class="text-2xl font-bold mb-6">CI/CD Implementation Examples</h3>
+          <div class="grid md:grid-cols-2 gap-8">
+            <div class="card p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+              <h4 class="text-lg font-semibold text-green-600">Fastlane Match Setup</h4>
+              <div class="mt-4 space-y-3 text-sm">
+                <div>
+                  <strong>1. Initialize Match</strong>
+                  <code class="block mt-1 p-2 bg-slate-100 dark:bg-slate-800 rounded text-xs">fastlane match init</code>
+                </div>
+                <div>
+                  <strong>2. Generate Certificates</strong>
+                  <code class="block mt-1 p-2 bg-slate-100 dark:bg-slate-800 rounded text-xs">fastlane match development<br>fastlane match adhoc<br>fastlane match appstore</code>
+                </div>
+                <div>
+                  <strong>3. Use in CI</strong>
+                  <code class="block mt-1 p-2 bg-slate-100 dark:bg-slate-800 rounded text-xs">fastlane match adhoc --readonly</code>
+                </div>
+              </div>
+            </div>
+
+            <div class="card p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+              <h4 class="text-lg font-semibold text-purple-600">Xcode Cloud</h4>
+              <div class="mt-4 space-y-3 text-sm">
+                <div>
+                  <strong>Automatic Management</strong>
+                  <p class="text-slate-600 dark:text-slate-400 mt-1">Xcode Cloud automatically manages certificates and profiles for your builds.</p>
+                </div>
+                <div>
+                  <strong>Requirements</strong>
+                  <ul class="mt-2 list-disc pl-5 text-slate-600 dark:text-slate-400 space-y-1">
+                    <li>Team Admin or App Manager role</li>
+                    <li>Proper bundle identifier configuration</li>
+                    <li>Capabilities enabled in project settings</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </section>
 
     <!-- Troubleshooting -->
     <section id="troubleshoot" class="mt-16 fade-in">
@@ -196,14 +382,14 @@
         <table class="w-full text-sm border-separate border-spacing-y-2">
           <thead>
             <tr class="text-left">
-              <th class="p-3">Symptom</th>
-              <th class="p-3">Likely Cause</th>
-              <th class="p-3">Fix</th>
+              <th class="p-3 font-bold">Symptom</th>
+              <th class="p-3 font-bold">Likely Cause</th>
+              <th class="p-3 font-bold">Fix</th>
             </tr>
           </thead>
           <tbody>
             <tr class="bg-white/70 dark:bg-slate-900">
-              <td class="p-3 font-semibold">“Provisioning profile doesn’t include entitlement …”</td>
+              <td class="p-3 font-semibold">"Provisioning profile doesn't include entitlement …"</td>
               <td class="p-3">The capability is enabled in Xcode, but not on the App ID in the Developer Portal (or the profile is stale).</td>
               <td class="p-3">Enable the capability on the App ID, regenerate the provisioning profile, and re-download it.</td>
             </tr>
@@ -213,43 +399,256 @@
               <td class="p-3">Ensure your CI process (e.g., using Fastlane `match`) correctly installs the certificate and key into the keychain before the build starts.</td>
             </tr>
             <tr class="bg-white/70 dark:bg-slate-900">
-              <td class="p-3 font-semibold">App won’t install on a test device</td>
+              <td class="p-3 font-semibold">App won't install on a test device</td>
               <td class="p-3">The device's UDID is not included in the Ad Hoc or Development profile.</td>
               <td class="p-3">Add the device's UDID on the Developer Portal, add it to the profile, regenerate the profile, and rebuild the app.</td>
             </tr>
+            <tr class="bg-white/70 dark:bg-slate-900">
+              <td class="p-3 font-semibold">"No signing certificate found"</td>
+              <td class="p-3">The certificate has expired, been revoked, or the private key is missing from your keychain.</td>
+              <td class="p-3">Check certificate expiration date. If expired, create a new one. If revoked, investigate why and create replacement.</td>
+            </tr>
+            <tr class="bg-white/70 dark:bg-slate-900">
+              <td class="p-3 font-semibold">"Profile doesn't match bundle identifier"</td>
+              <td class="p-3">The provisioning profile was created for a different App ID than what's in your project.</td>
+              <td class="p-3">Either change your bundle identifier to match the profile, or create a new profile for your current bundle identifier.</td>
+            </tr>
+            <tr class="bg-white/70 dark:bg-slate-900">
+              <td class="p-3 font-semibold">Xcode shows "No profiles for team ID"</td>
+              <td class="p-3">Your Apple ID isn't associated with the team, or profiles aren't downloaded.</td>
+              <td class="p-3">Check your team membership in Developer Portal. In Xcode, go to Preferences → Accounts → Download Manual Profiles.</td>
+            </tr>
           </tbody>
         </table>
+      </div>
+
+      <!-- Quick Diagnostic Commands -->
+      <div class="mt-10">
+        <h3 class="text-2xl font-bold mb-6">Quick Diagnostic Commands</h3>
+        <div class="grid md:grid-cols-2 gap-6">
+          <div class="card p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <h4 class="font-bold text-green-600 mb-3">Check Installed Certificates</h4>
+            <code class="block p-3 bg-slate-100 dark:bg-slate-800 rounded text-xs">security find-identity -v -p codesigning</code>
+            <p class="mt-2 text-xs text-slate-600 dark:text-slate-400">Lists all code signing certificates in your default keychain</p>
+          </div>
+
+          <div class="card p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <h4 class="font-bold text-green-600 mb-3">List Provisioning Profiles</h4>
+            <code class="block p-3 bg-slate-100 dark:bg-slate-800 rounded text-xs">ls ~/Library/MobileDevice/Provisioning\ Profiles/</code>
+            <p class="mt-2 text-xs text-slate-600 dark:text-slate-400">Shows all installed provisioning profiles on your machine</p>
+          </div>
+
+          <div class="card p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <h4 class="font-bold text-green-600 mb-3">Inspect Profile Details</h4>
+            <code class="block p-3 bg-slate-100 dark:bg-slate-800 rounded text-xs">security cms -D -i "profile.mobileprovision"</code>
+            <p class="mt-2 text-xs text-slate-600 dark:text-slate-400">View the contents and entitlements of a specific profile</p>
+          </div>
+
+          <div class="card p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <h4 class="font-bold text-green-600 mb-3">Clean Derived Data</h4>
+            <code class="block p-3 bg-slate-100 dark:bg-slate-800 rounded text-xs">rm -rf ~/Library/Developer/Xcode/DerivedData</code>
+            <p class="mt-2 text-xs text-slate-600 dark:text-slate-400">Often fixes mysterious build issues related to cached signing data</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Best Practices -->
+    <section id="best-practices" class="mt-16 fade-in">
+      <h2 class="text-3xl md:text-4xl font-black tracking-tight">Best Practices & Pro Tips</h2>
+
+      <div class="mt-8 grid md:grid-cols-2 gap-8">
+        <div class="card p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+          <h3 class="text-lg font-bold text-blue-600 mb-4">🛡️ Security Best Practices</h3>
+          <ul class="space-y-2 text-sm text-slate-700 dark:text-slate-300">
+            <li class="flex items-start gap-2">
+              <span class="text-green-500 mt-1">✓</span>
+              <span>Never share certificate private keys directly - use encrypted repositories (Fastlane Match)</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-green-500 mt-1">✓</span>
+              <span>Rotate certificates before they expire (1-year validity for distribution certificates)</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-green-500 mt-1">✓</span>
+              <span>Use separate Apple IDs for different team roles when possible</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-green-500 mt-1">✓</span>
+              <span>Regularly audit and clean up unused profiles and certificates</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="card p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+          <h3 class="text-lg font-bold text-purple-600 mb-4">⚡ Efficiency Tips</h3>
+          <ul class="space-y-2 text-sm text-slate-700 dark:text-slate-300">
+            <li class="flex items-start gap-2">
+              <span class="text-green-500 mt-1">✓</span>
+              <span>Use descriptive naming conventions: "AppName_AdHoc_2024" for profiles</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-green-500 mt-1">✓</span>
+              <span>Create wildcard App IDs for rapid prototyping: <code class="prose-code">com.company.*</code></span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-green-500 mt-1">✓</span>
+              <span>Set up automatic profile regeneration in Fastlane for capability changes</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-green-500 mt-1">✓</span>
+              <span>Use Xcode's "Download Manual Profiles" to sync latest profiles from Portal</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Common Mistakes -->
+      <div class="mt-8 p-6 rounded-2xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
+        <h4 class="font-bold text-red-800 dark:text-red-200 mb-3">🚨 Common Mistakes to Avoid</h4>
+        <div class="grid md:grid-cols-2 gap-4 text-sm">
+          <ul class="space-y-2 text-red-700 dark:text-red-300">
+            <li class="flex items-start gap-2">
+              <span class="text-red-500 mt-1">✗</span>
+              <span>Using automatic signing on CI/CD systems</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-red-500 mt-1">✗</span>
+              <span>Mixing automatic and manual signing across team members</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-red-500 mt-1">✗</span>
+              <span>Forgetting to regenerate profiles after adding capabilities</span>
+            </li>
+          </ul>
+          <ul class="space-y-2 text-red-700 dark:text-red-300">
+            <li class="flex items-start gap-2">
+              <span class="text-red-500 mt-1">✗</span>
+              <span>Creating multiple certificates of the same type unnecessarily</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-red-500 mt-1">✗</span>
+              <span>Not backing up certificate private keys securely</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-red-500 mt-1">✗</span>
+              <span>Hardcoding team IDs or bundle identifiers in build scripts</span>
+            </li>
+          </ul>
+        </div>
       </div>
     </section>
 
     <!-- Resources -->
     <section id="resources" class="mt-16 fade-in">
-      <h2 class="text-3xl md:text-4xl font-black tracking-tight">Official Documentation</h2>
-      <div class="mt-6 grid md:grid-cols-2 gap-6">
-        <a class="card p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-blue-50/50 dark:hover:bg-white/5"
-           target="_blank" rel="noopener"
-           href="https://developer.apple.com/help/account/provisioning-profiles/provisioning-profile-updates">
-          <div class="font-semibold">Provisioning Profile Updates</div>
-          <div class="text-sm mt-1 text-slate-600 dark:text-slate-400">General information about how profiles work and recent changes.</div>
-        </a>
-        <a class="card p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-blue-50/50 dark:hover:bg-white/5"
-           target="_blank" rel="noopener"
-           href="https://developer.apple.com/help/account/provisioning-profiles/create-a-development-provisioning-profile">
-          <div class="font-semibold">Create a Development Profile</div>
-          <div class="text-sm mt-1 text-slate-600 dark:text-slate-400">Step-by-step (manual) setup.</div>
-        </a>
-        <a class="card p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-blue-50/50 dark:hover:bg-white/5"
-           target="_blank" rel="noopener"
-           href="https://developer.apple.com/help/account/provisioning-profiles/create-an-ad-hoc-provisioning-profile/">
-          <div class="font-semibold">Create an Ad Hoc Profile</div>
-          <div class="text-sm mt-1 text-slate-600 dark:text-slate-400">Limited device distribution for testers.</div>
-        </a>
-        <a class="card p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-blue-50/50 dark:hover:bg-white/5"
-           target="_blank" rel="noopener"
-           href="https://developer.apple.com/help/account/provisioning-profiles/create-an-app-store-provisioning-profile">
-          <div class="font-semibold">Create an App Store Profile</div>
-          <div class="text-sm mt-1 text-slate-600 dark:text-slate-400">For TestFlight & App Store uploads.</div>
-        </a>
+      <h2 class="text-3xl md:text-4xl font-black tracking-tight">Resources & Tools</h2>
+
+      <!-- Official Documentation -->
+      <div class="mt-8">
+        <h3 class="text-2xl font-bold mb-6">Official Apple Documentation</h3>
+        <div class="grid md:grid-cols-2 gap-6">
+          <a class="card p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-blue-50/50 dark:hover:bg-white/5"
+             target="_blank" rel="noopener"
+             href="https://developer.apple.com/help/account/provisioning-profiles/provisioning-profile-updates">
+            <div class="font-semibold">Provisioning Profile Updates</div>
+            <div class="text-sm mt-1 text-slate-600 dark:text-slate-400">General information about how profiles work and recent changes.</div>
+          </a>
+          <a class="card p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-blue-50/50 dark:hover:bg-white/5"
+             target="_blank" rel="noopener"
+             href="https://developer.apple.com/help/account/provisioning-profiles/create-a-development-provisioning-profile">
+            <div class="font-semibold">Create a Development Profile</div>
+            <div class="text-sm mt-1 text-slate-600 dark:text-slate-400">Step-by-step (manual) setup.</div>
+          </a>
+          <a class="card p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-blue-50/50 dark:hover:bg-white/5"
+             target="_blank" rel="noopener"
+             href="https://developer.apple.com/help/account/provisioning-profiles/create-an-ad-hoc-provisioning-profile/">
+            <div class="font-semibold">Create an Ad Hoc Profile</div>
+            <div class="text-sm mt-1 text-slate-600 dark:text-slate-400">Limited device distribution for testers.</div>
+          </a>
+          <a class="card p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-blue-50/50 dark:hover:bg-white/5"
+             target="_blank" rel="noopener"
+             href="https://developer.apple.com/help/account/provisioning-profiles/create-an-app-store-provisioning-profile">
+            <div class="font-semibold">Create an App Store Profile</div>
+            <div class="text-sm mt-1 text-slate-600 dark:text-slate-400">For TestFlight & App Store uploads.</div>
+          </a>
+          <a class="card p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-blue-50/50 dark:hover:bg-white/5"
+             target="_blank" rel="noopener"
+             href="https://developer.apple.com/documentation/security/certificate_key_and_trust_services">
+            <div class="font-semibold">Certificate, Key, and Trust Services</div>
+            <div class="text-sm mt-1 text-slate-600 dark:text-slate-400">Technical documentation on Apple's cryptographic framework.</div>
+          </a>
+          <a class="card p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-blue-50/50 dark:hover:bg-white/5"
+             target="_blank" rel="noopener"
+             href="https://developer.apple.com/documentation/bundleresources/entitlements">
+            <div class="font-semibold">Entitlements Reference</div>
+            <div class="text-sm mt-1 text-slate-600 dark:text-slate-400">Complete list of all available app entitlements.</div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Third-Party Tools -->
+      <div class="mt-12">
+        <h3 class="text-2xl font-bold mb-6">Essential Third-Party Tools</h3>
+        <div class="grid md:grid-cols-2 gap-6">
+          <a class="card p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-green-50/50 dark:hover:bg-white/5"
+             target="_blank" rel="noopener"
+             href="https://docs.fastlane.tools/actions/match/">
+            <div class="font-semibold text-green-600">Fastlane Match</div>
+            <div class="text-sm mt-1 text-slate-600 dark:text-slate-400">Industry standard for team certificate management. Stores encrypted signing assets in Git.</div>
+          </a>
+          <a class="card p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-green-50/50 dark:hover:bg-white/5"
+             target="_blank" rel="noopener"
+             href="https://docs.fastlane.tools/actions/sigh/">
+            <div class="font-semibold text-green-600">Fastlane Sigh</div>
+            <div class="text-sm mt-1 text-slate-600 dark:text-slate-400">Create and renew provisioning profiles automatically via command line.</div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Quick Reference -->
+      <div class="mt-12">
+        <h3 class="text-2xl font-bold mb-6">Quick Reference</h3>
+        <div class="grid md:grid-cols-2 gap-8">
+          <div class="card p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <h4 class="font-bold text-blue-600 mb-4">Important File Locations</h4>
+            <div class="space-y-2 text-sm">
+              <div>
+                <strong>Provisioning Profiles:</strong>
+                <code class="block mt-1 text-xs bg-slate-100 dark:bg-slate-800 p-2 rounded">~/Library/MobileDevice/Provisioning Profiles/</code>
+              </div>
+              <div>
+                <strong>Keychain (certificates):</strong>
+                <code class="block mt-1 text-xs bg-slate-100 dark:bg-slate-800 p-2 rounded">~/Library/Keychains/login.keychain-db</code>
+              </div>
+              <div>
+                <strong>Xcode Derived Data:</strong>
+                <code class="block mt-1 text-xs bg-slate-100 dark:bg-slate-800 p-2 rounded">~/Library/Developer/Xcode/DerivedData</code>
+              </div>
+            </div>
+          </div>
+
+          <div class="card p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <h4 class="font-bold text-blue-600 mb-4">Certificate Validity Periods</h4>
+            <div class="space-y-2 text-sm">
+              <div class="flex justify-between">
+                <span>Apple Development:</span>
+                <span class="font-semibold">1 year</span>
+              </div>
+              <div class="flex justify-between">
+                <span>Apple Distribution:</span>
+                <span class="font-semibold">1 year</span>
+              </div>
+              <div class="flex justify-between">
+                <span>Provisioning Profiles:</span>
+                <span class="font-semibold">1 year (max)</span>
+              </div>
+              <div class="flex justify-between">
+                <span>Developer Program:</span>
+                <span class="font-semibold">1 year</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -288,4 +687,3 @@
   </script>
 </body>
 </html>
-
