@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Provisioning Profiles & Capabilities — Practical iOS Guide</title>
+  <title>Provisioning Profiles & Capabilities — A Practical iOS Guide</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
-  <meta name="description" content="A concise, practical guide to iOS code signing: certificates, App IDs, provisioning profiles, capabilities, entitlements, CI/CD, troubleshooting, and a live demo script.">
+  <meta name="description" content="A concise, practical guide to iOS code signing: certificates, App IDs, provisioning profiles, capabilities, entitlements, CI/CD, and troubleshooting.">
   <style>
     :root { color-scheme: light dark; }
     html, body { height: 100%; }
@@ -20,14 +20,16 @@
     .card:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(2,6,23,.08); }
     .active-link { color: #1d4ed8 !important; font-weight: 700; }
     .kbd { border:1px solid #cbd5e1; border-bottom-width: 3px; padding:.1rem .35rem; border-radius:.25rem; font-size:.85em; background:#fff; }
+    .puzzle-piece { transition: all 0.3s ease-in-out; }
+    .puzzle-piece:hover { transform: scale(1.03); z-index: 10; box-shadow: 0 20px 30px rgba(0,0,0,0.1); }
     @media (prefers-color-scheme: dark) {
       body { background:#0b1220; color:#e5e7eb; }
       .glass { background: rgba(255,255,255,.06); backdrop-filter: blur(10px); }
       .shadow-soft { box-shadow: 0 10px 25px rgba(0,0,0,.35); }
       .bg-hero { background: radial-gradient(1200px 600px at 10% 0%, rgba(59,130,246,.2), transparent 60%), radial-gradient(800px 500px at 90% 20%, rgba(147,197,253,.15), transparent 55%); }
+      .card:hover { box-shadow: 0 10px 25px rgba(0,0,0,.3); }
+      .puzzle-piece:hover { box-shadow: 0 20px 30px rgba(0,0,0,0.4); }
     }
-    .copy-btn { opacity:.0; transition:opacity .2s ease; }
-    pre:hover .copy-btn { opacity:1; }
   </style>
 </head>
 <body class="text-slate-800 dark:text-slate-200">
@@ -37,16 +39,10 @@
       <div class="flex items-center gap-3"><span class="font-extrabold tracking-tight">Mooncascade Mobile Team</span><span class="font-extrabold tracking-tight">iOS Signing Guide</span></div>
       <div class="hidden md:flex items-center gap-6 text-sm">
         <a href="#overview" class="hover:text-blue-600">Overview</a>
-        <a href="#fundamentals" class="hover:text-blue-600">Fundamentals</a>
         <a href="#profiles" class="hover:text-blue-600">Profile Types</a>
-        <a href="#capabilities" class="hover:text-blue-600">Capabilities</a>
-        <a href="#xcode15" class="hover:text-blue-600">Xcode 15+</a>
         <a href="#manual" class="hover:text-blue-600">Manual Steps</a>
-        <a href="#verify" class="hover:text-blue-600">Verify</a>
-        <a href="#ci" class="hover:text-blue-600">CI/CD</a>
+        <a href="#ci" class="hover:text-blue-600">Team Workflows</a>
         <a href="#troubleshoot" class="hover:text-blue-600">Troubleshoot</a>
-        <a href="#demo" class="hover:text-blue-600">Live Demo</a>
-        <a href="#faq" class="hover:text-blue-600">FAQ</a>
         <a href="#resources" class="hover:text-blue-600">Docs</a>
       </div>
     </nav>
@@ -60,12 +56,8 @@
           Provisioning Profiles & Capabilities
         </h1>
         <p class="mt-5 text-lg md:text-xl text-slate-600 dark:text-slate-300 max-w-3xl">
-          A concise, practical guide to Apple&rsquo;s code signing system: certificates, App IDs, provisioning profiles, capabilities, entitlements, and team workflows.
+          A practical guide to Apple’s code signing system: certificates, App IDs, provisioning profiles, capabilities, entitlements, and team workflows.
         </p>
-        <div class="mt-6 flex flex-wrap gap-3">
-          <a href="#overview" class="px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700">Start Reading</a>
-          <a href="#cheatsheet" class="px-4 py-2 rounded-lg border border-slate-300/70 dark:border-slate-700 hover:bg-slate-50/50 dark:hover:bg-white/5">Jump to Cheat Sheet</a>
-        </div>
       </div>
     </div>
   </section>
@@ -73,48 +65,58 @@
   <main class="max-w-6xl mx-auto px-4 pb-24">
     <!-- Overview -->
     <section id="overview" class="mt-14 fade-in">
-      <h2 class="text-3xl md:text-4xl font-black tracking-tight">Overview</h2>
+      <h2 class="text-3xl md:text-4xl font-black tracking-tight">Overview: The Core Components of Code Signing</h2>
       <p class="mt-4 text-slate-700 dark:text-slate-300 max-w-3xl">
-        iOS enforces a strict chain of trust. To run an app on devices or distribute it, you need: The entire system exists for one reason: Trust. The entire system exists for one reason: Trust.</p>
-      <div class="mt-6 grid md:grid-cols-4 gap-6">
-        <div class="card p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-          <h3 class="font-bold">Certificate</h3>
-          <p class="text-sm mt-2 text-slate-600 dark:text-slate-400">Proves who is allowed to sign builds.</p>
+        To build the "chain of trust" that Apple requires, five key components must be correctly defined and linked. Think of it as assembling a puzzle: each piece answers a critical security question. Only when all pieces fit together can a successful, trusted build be created. Before we explain each component, it's important to understand *why* they are all necessary: Apple needs to verify every aspect of an app's origin and permissions before allowing it to run.
+      </p>
+      <div class="mt-10 flex flex-col lg:flex-row items-center justify-center gap-2">
+        <!-- Left Pieces -->
+        <div class="flex flex-col gap-2 w-full lg:w-auto">
+          <div class="puzzle-piece p-6 rounded-2xl rounded-tr-none bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 lg:w-64">
+            <h3 class="text-xl font-bold">1. Certificate (The "Who")</h3>
+            <p class="mt-2 text-slate-700 dark:text-slate-300 text-sm">Proves your identity as a trusted developer. It's a cryptographic file that links your private key (kept secret on your machine) to a public key that Apple can verify.</p>
+             <ul class="mt-3 list-disc pl-5 text-xs space-y-2 text-slate-600 dark:text-slate-400">
+                <li><strong>Types:</strong> "Apple Development" (for debugging) and "Apple Distribution" (for Ad Hoc, TestFlight, and App Store).</li>
+                <li><strong>How to Create:</strong> Manually, you create a Certificate Signing Request (CSR) via Keychain Access on your Mac and upload it to the Apple Developer Portal under <code class="prose-code">Certificates</code>.</li>
+             </ul>
+          </div>
+          <div class="puzzle-piece p-6 rounded-2xl rounded-br-none bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 lg:w-64">
+            <h3 class="text-xl font-bold">2. Team ID (The "Whose")</h3>
+            <p class="mt-2 text-slate-700 dark:text-slate-300 text-sm">A unique 10-character string that identifies your development team. It links all your assets (apps, certificates, profiles) to your specific Apple Developer account.</p>
+            <ul class="mt-3 list-disc pl-5 text-xs space-y-2 text-slate-600 dark:text-slate-400">
+              <li><strong>Where to Find:</strong> Log in to the <a href="https://developer.apple.com/account" target="_blank" rel="noopener" class="text-blue-600 hover:underline">Apple Developer Portal</a> and click on "Membership". Your Team ID will be listed there.</li>
+            </ul>
+          </div>
         </div>
-        <div class="card p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-          <h3 class="font-bold">App ID</h3>
-          <p class="text-sm mt-2 text-slate-600 dark:text-slate-400">Identifies the app (e.g., <code class="prose-code">com.company.app</code>).</p>
-        </div>
-        <div class="card p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-          <h3 class="font-bold">Provisioning Profile</h3>
-          <p class="text-sm mt-2 text-slate-600 dark:text-slate-400">Defines who/what/where/when/how your app can run.</p>
-        </div>
-        <div class="card p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-          <h3 class="font-bold">Capabilities & Entitlements</h3>
-          <p class="text-sm mt-2 text-slate-600 dark:text-slate-400">Feature permissions encoded into your bundle.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Fundamentals -->
-    <section id="fundamentals" class="mt-16 fade-in">
-      <h2 class="text-3xl md:text-4xl font-black tracking-tight">Fundamentals</h2>
-      <div class="mt-6 grid md:grid-cols-2 gap-8">
-        <div class="card p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-          <h3 class="text-xl font-bold">Certificates</h3>
-          <p class="mt-2 text-slate-700 dark:text-slate-300">Issued by Apple. Your private key signs builds. Keep it secret.</p>
-          <ul class="mt-3 list-disc pl-5 text-sm space-y-1 text-slate-600 dark:text-slate-400">
-            <li>Types: Development, Distribution (App Store / Ad Hoc), Apple Development/Distribution.</li>
-            <li>Stored in Keychain; may be shared securely for team workflows.</li>
+        <!-- Center Piece -->
+        <div class="puzzle-piece p-8 rounded-2xl bg-blue-600 text-white shadow-xl order-first lg:order-none w-full lg:w-80">
+           <h3 class="text-2xl font-bold">Provisioning Profile</h3>
+           <p class="mt-2 text-sm font-medium">The central piece that bundles everything together. This file authorizes your app to be launched, linking the Certificate (Who), App ID (What), Team ID (Whose), and Devices (Where).</p>
+           <ul class="mt-3 list-disc pl-5 text-xs space-y-2">
+            <li><strong>Where to Find:</strong>
+                <ul>
+                    <li><strong>Portal:</strong> <code class="prose-code">Certificates > Profiles</code>.</li>
+                    <li><strong>Local:</strong> <code class="prose-code">~/Library/MobileDevice/Provisioning Profiles/</code>.</li>
+                </ul>
+            </li>
           </ul>
         </div>
-        <div class="card p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-          <h3 class="text-xl font-bold">App IDs</h3>
-          <p class="mt-2 text-slate-700 dark:text-slate-300">Define the app&rsquo;s identity and eligible capabilities.</p>
-          <ul class="mt-3 list-disc pl-5 text-sm space-y-1 text-slate-600 dark:text-slate-400">
-            <li>Explicit App IDs required for many capabilities.</li>
-            <li>App Clips and some distribution options may be limited.</li>
+        <!-- Right Pieces -->
+        <div class="flex flex-col gap-2 w-full lg:w-auto">
+           <div class="puzzle-piece p-6 rounded-2xl rounded-tl-none bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 lg:w-64">
+            <h3 class="text-xl font-bold">3. App ID (The "What")</h3>
+            <p class="mt-2 text-slate-700 dark:text-slate-300 text-sm">A unique identifier that registers your app with Apple (e.g., <code class="prose-code">com.company.appname</code>). It also serves as a record of the capabilities your app is allowed to use.</p>
+            <ul class="mt-3 list-disc pl-5 text-xs space-y-2 text-slate-600 dark:text-slate-400">
+            <li><strong>Where to Find:</strong> In Xcode under "Signing & Capabilities" as the "Bundle Identifier", or on the Developer Portal under <code class="prose-code">Identifiers</code>.</li>
           </ul>
+          </div>
+          <div class="puzzle-piece p-6 rounded-2xl rounded-bl-none bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 lg:w-64">
+            <h3 class="text-xl font-bold">4. Capabilities (The "What It Can Do")</h3>
+            <p class="mt-2 text-slate-700 dark:text-slate-300 text-sm">Permissions you enable for your app to use special Apple services (like Push Notifications or Apple Pay). Enabling a capability adds an "Entitlement" to your app, which must be listed in the profile.</p>
+            <ul class="mt-3 list-disc pl-5 text-xs space-y-2 text-slate-600 dark:text-slate-400">
+                <li><strong>Where to Enable:</strong> In Xcode under "Signing & Capabilities", or on the Developer Portal by editing your App ID.</li>
+            </ul>
+          </div>
         </div>
       </div>
     </section>
@@ -126,165 +128,70 @@
         <div class="card p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
           <h3 class="text-xl font-bold">Development</h3>
           <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">
-            Install on registered devices for local testing and debugging.
+            Install on registered devices for local testing and debugging. Links your development certificate to your App ID and a list of your personal devices.
           </p>
         </div>
         <div class="card p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
           <h3 class="text-xl font-bold">Ad&nbsp;Hoc</h3>
           <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">
-            Distribute to a limited set of device UDIDs, for example internal testers. Before starting make sure you have an App ID, a distribution certificate, and the test devices registered.
+            Distribute to a limited set of device UDIDs for internal testing (e.g., via Firebase). It uses a distribution certificate and is the standard for QA builds.
           </p>
         </div>
         <div class="card p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
           <h3 class="text-xl font-bold">App Store</h3>
           <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">
-            Required for TestFlight and App Store distribution.
+            Required for TestFlight and App Store distribution. It doesn't contain a device list, as it's intended for public release after Apple's review.
           </p>
         </div>
       </div>
     </section>
 
-    <!-- Capabilities -->
-    <section id="capabilities" class="mt-16 fade-in">
-      <h2 class="text-3xl md:text-4xl font-black tracking-tight">Capabilities &amp; Entitlements</h2>
-      <p class="mt-3 text-slate-700 dark:text-slate-300 max-w-3xl">
-        A <strong>Capability</strong> is enabled in Xcode or on the Apple Developer website. Enabling it adds a specific
-        <strong>Entitlement</strong> (a key/value) to your app&rsquo;s <code class="prose-code">.entitlements</code> file.
-        Your provisioning profile must include the same entitlement.
-      </p>
-      <div class="mt-6 grid md:grid-cols-2 gap-8">
-        <div class="card p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-          <h3 class="text-lg font-bold">Examples</h3>
-          <ul class="mt-3 list-disc pl-5 text-sm space-y-1 text-slate-600 dark:text-slate-400">
-            <li>Push Notifications → <code class="prose-code">aps-environment</code></li>
-            <li>Apple Pay / Wallet → payment & pass entitlements</li>
-            <li>iCloud, HealthKit, Background Modes, CarPlay, Multicast Networking</li>
-          </ul>
-        </div>
-        <div class="card p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-          <h3 class="text-lg font-bold">Notes</h3>
-          <ul class="mt-3 list-disc pl-5 text-sm space-y-1 text-slate-600 dark:text-slate-400">
-            <li>Some capabilities require Apple approval.</li>
-            <li>Some are limited to certain distribution profiles.</li>
-            <li>Enabling may require manual editing of the entitlements file.</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- Xcode 15+ Managed Capabilities -->
-    <section id="xcode15" class="mt-16 fade-in">
-      <h2 class="text-3xl md:text-4xl font-black tracking-tight">Managed Capabilities (Xcode 15+)</h2>
-      <p class="mt-3 text-slate-700 dark:text-slate-300 max-w-3xl">
-        In Xcode 15 and later, approved capabilities can be enabled directly in the Signing &amp; Capabilities tab.
-        Xcode will insert the entitlement and create/update provisioning profiles automatically.
-      </p>
-      <ul class="mt-4 list-disc pl-6 text-slate-600 dark:text-slate-400 space-y-1 text-sm">
-        <li>Supports automatic signing and Xcode Cloud by default for features like CarPlay and Multicast Networking.</li>
-        <li>Program members with access to Certificates, Identifiers &amp; Profiles can add approved capabilities.</li>
-        <li>Some entitlements are valid only for specific distribution options; verify the App ID configuration.</li>
-        <li>Many capabilities require an explicit App ID; App Clips may be ineligible for several features.</li>
-      </ul>
-    </section>
-
-    <!-- Manual Provisioning -->
+    <!-- Manual Steps -->
     <section id="manual" class="mt-16 fade-in">
-      <h2 class="text-3xl md:text-4xl font-black tracking-tight">Manual Provisioning (Developer Portal)</h2>
-      <ol class="mt-4 list-decimal pl-6 space-y-2 text-slate-700 dark:text-slate-300">
-        <li>Open <em>Certificates, Identifiers &amp; Profiles</em> → <strong>Profiles</strong> → <span class="kbd">+</span>.</li>
-        <li>Select profile type (Development, Ad Hoc, App Store) → <span class="kbd">Continue</span>.</li>
-        <li>Choose the correct <strong>App ID</strong> (with required capabilities) → <span class="kbd">Continue</span>.</li>
-        <li>Select a signing <strong>Certificate</strong> that is present on your build machine.</li>
-        <li>(Dev/Ad Hoc) Select devices to include.</li>
-        <li>Name and <strong>Generate</strong> the profile. Download and install (double-click) or add to CI keychain.</li>
-      </ol>
-      <p class="mt-4 text-sm text-slate-500 dark:text-slate-400">
-        You may be prompted to pick managed entitlements during creation. If the App ID already has them enabled, you can skip.
-      </p>
-    </section>
+        <h2 class="text-3xl md:text-4xl font-black tracking-tight">Manual Provisioning Walkthrough</h2>
+        <p class="mt-3 text-slate-700 dark:text-slate-300 max-w-3xl">
+          While Xcode can automate much of this, understanding the manual process on the Developer Portal is crucial for troubleshooting.
+        </p>
+        <ol class="mt-4 list-decimal pl-6 space-y-2 text-slate-700 dark:text-slate-300">
+          <li>Open <em>Certificates, Identifiers & Profiles</em> → <strong>Profiles</strong> → <span class="kbd">+</span>.</li>
+          <li>Select the profile type (e.g., Development, Ad Hoc, App Store) and click <span class="kbd">Continue</span>.</li>
+          <li>Choose the correct **App ID** for your project. This App ID must already have the capabilities you need enabled on it.</li>
+          <li>Select a signing **Certificate**. The private key for this certificate must be installed in the Keychain of the machine that will build the app.</li>
+          <li>For Development or Ad Hoc profiles, select the registered devices you want to include.</li>
+          <li>Name the profile descriptively (e.g., "MyApp AdHoc Profile") and click **Generate**.</li>
+          <li>Download the profile and double-click it to install it in Xcode.</li>
+        </ol>
+      </section>
 
-    <!-- Verify -->
-    <section id="verify" class="mt-16 fade-in">
-      <h2 class="text-3xl md:text-4xl font-black tracking-tight">Verifying Profiles &amp; Entitlements</h2>
-      <div class="mt-6 grid md:grid-cols-2 gap-8">
-        <div class="card p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-          <h3 class="font-bold">On the Web</h3>
-          <ol class="mt-2 list-decimal pl-6 text-sm space-y-2 text-slate-600 dark:text-slate-400">
-            <li>Open the provisioning profile in the Developer portal.</li>
-            <li>Check <strong>Enabled Capabilities</strong> for the associated App ID.</li>
-            <li>If invalid, click <em>Edit</em> and save to regenerate.</li>
-          </ol>
-        </div>
-        <div class="card p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-          <h3 class="font-bold">On Your Machine</h3>
-          <p class="text-sm text-slate-600 dark:text-slate-400">Use <code class="prose-code">security</code> and <code class="prose-code">codesign</code> to inspect profiles and entitlements.</p>
-<pre class="relative p-4 bg-slate-900 text-slate-100 rounded-xl overflow-x-auto prose-code"><button class="copy-btn absolute top-2 right-2 text-xs px-2 py-1 rounded bg-slate-700 hover:bg-slate-600">Copy</button>security cms -D -i /path/to/profile.mobileprovision
-codesign -d --entitlements :- /path/to/MyApp.app</pre>
-        </div>
-      </div>
-    </section>
-
-    <!-- CI/CD -->
+    <!-- Team Workflows & CI/CD -->
     <section id="ci" class="mt-16 fade-in">
-      <h2 class="text-3xl md:text-4xl font-black tracking-tight">Team Workflows &amp; CI/CD</h2>
-      <div class="mt-6 grid md:grid-cols-2 gap-8">
-        <div class="card p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-          <h3 class="text-lg font-bold">Automatic Signing</h3>
-          <ul class="mt-3 list-disc pl-6 text-sm space-y-1 text-slate-600 dark:text-slate-400">
-            <li>Great for prototypes and solo development.</li>
-            <li>May revoke certificates and impact other developers.</li>
-            <li>Use with caution in shared projects.</li>
-          </ul>
+        <h2 class="text-3xl md:text-4xl font-black tracking-tight">Team Workflows & CI/CD</h2>
+        <p class="mt-3 text-slate-700 dark:text-slate-300 max-w-3xl">
+          Managing signing for a team requires a different approach than working locally. The goal is to have a single, reliable source of truth for signing assets.
+        </p>
+        <div class="mt-6 grid md:grid-cols-2 gap-8">
+          <div class="card p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <h3 class="text-lg font-bold">Local Workflow (Automatic Signing)</h3>
+            <p class="mt-2 text-slate-700 dark:text-slate-300">Ideal for solo developers or initial project setup. By checking "Automatically manage signing," you authorize Xcode to act on your behalf.</p>
+            <ul class="mt-3 list-disc pl-6 text-sm space-y-1 text-slate-600 dark:text-slate-400">
+              <li><strong>Pros:</strong> Simple, no manual configuration needed.</li>
+              <li><strong>Cons:</strong> Creates private keys locally that aren't shared, which breaks team builds. Can unexpectedly revoke existing certificates, impacting other developers.</li>
+            </ul>
+          </div>
+          <div class="card p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <h3 class="text-lg font-bold">Team Workflow (Shared & Manual Signing)</h3>
+            <p class="mt-2 text-slate-700 dark:text-slate-300">The industry standard for teams and CI/CD. This method uses a central, secure repository for signing assets.</p>
+            <ul class="mt-3 list-disc pl-6 text-sm space-y-1 text-slate-600 dark:text-slate-400">
+              <li><strong>Method:</strong> Use tools like **Fastlane `match`** to create certificates and profiles and store them, encrypted, in a private Git repository.</li>
+              <li><strong>Process:</strong> The CI server clones this repository, decrypts the assets, installs them in a temporary keychain, and then builds the app. This ensures every build is signed with the exact same identity.</li>
+            </ul>
+          </div>
         </div>
-        <div class="card p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-          <h3 class="text-lg font-bold">Managed/Manual Signing</h3>
-          <ul class="mt-3 list-disc pl-6 text-sm space-y-1 text-slate-600 dark:text-slate-400">
-            <li>Single source of truth for certs/profiles (e.g., repository or secure vault).</li>
-            <li>Use tools like Fastlane <code class="prose-code">match</code> to sync certificates/profiles.</li>
-            <li>Prefer organization-controlled storage. Never expose private keys publicly.</li>
-          </ul>
-        </div>
-      </div>
-    </section>
+      </section>
 
-    
-    <!-- Flowcharts -->
-    <section id="flows" class="mt-16 fade-in">
-      <h2 class="text-3xl md:text-4xl font-black tracking-tight">Signing Flows</h2>
-
-      <!-- Local automatic signing flow -->
-      <div class="mt-6 p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-        <h3 class="text-xl font-bold mb-4">Local Project — Automatic Signing</h3>
-        <div class="grid md:grid-cols-7 gap-3 items-center text-sm">
-          <div class="p-3 text-center rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">App ID exists</div>
-          <div class="text-center">➔</div>
-          <div class="p-3 text-center rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">Device registered</div>
-          <div class="text-center">➔</div>
-          <div class="p-3 text-center rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">Xcode: Automatically manage signing</div>
-          <div class="text-center">➔</div>
-          <div class="p-3 text-center rounded-xl border border-green-400 dark:border-green-700 bg-green-50 dark:bg-green-900/20">Provisioning profile created</div>
-        </div>
-      </div>
-
-      <!-- Team signing flow with match -->
-      <div class="mt-8 p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-        <h3 class="text-xl font-bold mb-4">Team and CI — Shared Signing With match</h3>
-        <div class="grid md:grid-cols-5 gap-3 items-center text-sm">
-          <div class="p-3 text-center rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">match init creates signing key</div>
-          <div class="text-center">➔</div>
-          <div class="p-3 text-center rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">Encrypted key stored in private repo</div>
-          <div class="text-center">➔</div>
-          <div class="p-3 text-center rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">CI runs match to fetch key and profile</div>
-        </div>
-        <div class="mt-3 text-center">↓</div>
-        <div class="mt-3 p-3 text-center rounded-xl border border-green-400 dark:border-green-700 bg-green-50 dark:bg-green-900/20 text-sm">
-          App is signed consistently across all machines
-        </div>
-      </div>
-    </section>
-<!-- Troubleshooting -->
+    <!-- Troubleshooting -->
     <section id="troubleshoot" class="mt-16 fade-in">
-      <h2 class="text-3xl md:text-4xl font-black tracking-tight">Troubleshooting Matrix</h2>
+      <h2 class="text-3xl md:text-4xl font-black tracking-tight">Common Troubleshooting</h2>
       <div class="mt-6 overflow-x-auto">
         <table class="w-full text-sm border-separate border-spacing-y-2">
           <thead>
@@ -296,99 +203,22 @@ codesign -d --entitlements :- /path/to/MyApp.app</pre>
           </thead>
           <tbody>
             <tr class="bg-white/70 dark:bg-slate-900">
-              <td class="p-3">“Provisioning profile doesn’t include entitlement …”</td>
-              <td class="p-3">Capability not enabled for App ID / profile not refreshed</td>
-              <td class="p-3">Enable capability, re-save App ID, regenerate profile, re-download</td>
+              <td class="p-3 font-semibold">“Provisioning profile doesn’t include entitlement …”</td>
+              <td class="p-3">The capability is enabled in Xcode, but not on the App ID in the Developer Portal (or the profile is stale).</td>
+              <td class="p-3">Enable the capability on the App ID, regenerate the provisioning profile, and re-download it.</td>
             </tr>
             <tr class="bg-white/70 dark:bg-slate-900">
-              <td class="p-3">Build fails on CI but works locally</td>
-              <td class="p-3">Missing cert/private key or wrong team on CI</td>
-              <td class="p-3">Install correct cert + key on CI; verify Team ID and profile</td>
+              <td class="p-3 font-semibold">Build fails on CI but works locally</td>
+              <td class="p-3">The CI machine is missing the certificate's private key.</td>
+              <td class="p-3">Ensure your CI process (e.g., using Fastlane `match`) correctly installs the certificate and key into the keychain before the build starts.</td>
             </tr>
             <tr class="bg-white/70 dark:bg-slate-900">
-              <td class="p-3">App won’t install on device</td>
-              <td class="p-3">Device not in profile (Dev/Ad Hoc) or profile expired</td>
-              <td class="p-3">Add device UDID; regenerate profile; check expiration</td>
-            </tr>
-            <tr class="bg-white/70 dark:bg-slate-900">
-              <td class="p-3">Push registration fails</td>
-              <td class="p-3">Missing <code class="prose-code">aps-environment</code> or wrong environment</td>
-              <td class="p-3">Enable Push capability; ensure correct profile (dev vs prod)</td>
-            </tr>
-            <tr class="bg-white/70 dark:bg-slate-900">
-              <td class="p-3">Wallet/Apple&nbsp;Pay not available</td>
-              <td class="p-3">Not approved; entitlements not configured</td>
-              <td class="p-3">Request approval; configure merchant IDs / pass type IDs; enable capability</td>
+              <td class="p-3 font-semibold">App won’t install on a test device</td>
+              <td class="p-3">The device's UDID is not included in the Ad Hoc or Development profile.</td>
+              <td class="p-3">Add the device's UDID on the Developer Portal, add it to the profile, regenerate the profile, and rebuild the app.</td>
             </tr>
           </tbody>
         </table>
-      </div>
-      <div class="mt-6 grid md:grid-cols-2 gap-8">
-        <div class="p-4 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200/70 dark:border-amber-800">
-          <h3 class="font-bold">Roles</h3>
-          <p class="text-sm mt-1 text-amber-900 dark:text-amber-200">Creating/editing profiles often requires Account Holder or Admin role.</p>
-        </div>
-        <div class="p-4 rounded-xl bg-rose-50 dark:bg-rose-900/20 border border-rose-200/70 dark:border-rose-800">
-          <h3 class="font-bold">Security</h3>
-          <p class="text-sm mt-1 text-rose-900 dark:text-rose-200">Treat private keys as secrets. Rotate if compromised. Avoid third‑party exposure.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Live Demo Script -->
-    <section id="demo" class="mt-16 fade-in">
-      <h2 class="text-3xl md:text-4xl font-black tracking-tight">Live Demo Script (≈5 min)</h2>
-      <ol class="mt-4 list-decimal pl-6 space-y-2 text-slate-700 dark:text-slate-300">
-        <li>Open a sample Xcode project → <strong>Signing &amp; Capabilities</strong>.</li>
-        <li>Check team and bundle identifier are correct.</li>
-        <li>Click <strong>+ Capability</strong> → add <em>Push Notifications</em>.</li>
-        <li>Show the generated <code class="prose-code">.entitlements</code> change.</li>
-        <li>Build to device. If needed, refresh the provisioning profile (Xcode 15+ handles this automatically).</li>
-        <li>Verify entitlements locally:
-<pre class="relative p-4 bg-slate-900 text-slate-100 rounded-xl overflow-x-auto prose-code"><button class="copy-btn absolute top-2 right-2 text-xs px-2 py-1 rounded bg-slate-700 hover:bg-slate-600">Copy</button>codesign -d --entitlements :- /path/to/DerivedData/.../Build/Products/Debug-iphoneos/MyApp.app</pre>
-        </li>
-      </ol>
-    </section>
-
-    <!-- Cheat Sheet -->
-    <section id="cheatsheet" class="mt-16 fade-in">
-      <h2 class="text-3xl md:text-4xl font-black tracking-tight">Cheat Sheet</h2>
-      <div class="mt-6 grid md:grid-cols-4 gap-6">
-        <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-          <h3 class="font-bold">Profiles are Security</h3>
-          <p class="text-sm mt-2">They are Apple's contract of trust for who, what, where, when, and how.</p>
-        </div>
-        <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-          <h3 class="font-bold">Choose Your Method</h3>
-          <p class="text-sm mt-2">Use Xcode automatic signing for local work and a shared solution like match for team projects.</p>
-        </div>
-        <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-          <h3 class="font-bold">Automate for Consistency</h3>
-          <p class="text-sm mt-2">Automate signing in CI to prevent errors and keep builds reliable.</p>
-        </div>
-    </div>
-    </section>
-
-    <!-- FAQ -->
-    <section id="faq" class="mt-16 fade-in">
-      <h2 class="text-3xl md:text-4xl font-black tracking-tight">FAQ</h2>
-      <div class="mt-6 grid md:grid-cols-2 gap-8">
-        <div class="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-          <h3 class="font-bold">Do I need internet on first launch?</h3>
-          <p class="text-sm mt-2 text-slate-600 dark:text-slate-400">New developer device installs may require online verification on first run.</p>
-        </div>
-        <div class="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-          <h3 class="font-bold">Who can approve capabilities?</h3>
-          <p class="text-sm mt-2 text-slate-600 dark:text-slate-400">Some capabilities require Apple approval; organization Account Holder/Admin manages access.</p>
-        </div>
-        <div class="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-          <h3 class="font-bold">Why does my profile not match entitlements?</h3>
-          <p class="text-sm mt-2 text-slate-600 dark:text-slate-400">Ensure the capability is enabled for the App ID and that the profile is regenerated and installed.</p>
-        </div>
-        <div class="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-          <h3 class="font-bold">Can I enable everything?</h3>
-          <p class="text-sm mt-2 text-slate-600 dark:text-slate-400">Enable only what you need. Some capabilities are gated and require configuration (e.g., merchant IDs).</p>
-        </div>
       </div>
     </section>
 
@@ -400,7 +230,7 @@ codesign -d --entitlements :- /path/to/MyApp.app</pre>
            target="_blank" rel="noopener"
            href="https://developer.apple.com/help/account/provisioning-profiles/provisioning-profile-updates">
           <div class="font-semibold">Provisioning Profile Updates</div>
-          <div class="text-sm mt-1 text-slate-600 dark:text-slate-400">How profiles work and recent changes.</div>
+          <div class="text-sm mt-1 text-slate-600 dark:text-slate-400">General information about how profiles work and recent changes.</div>
         </a>
         <a class="card p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-blue-50/50 dark:hover:bg-white/5"
            target="_blank" rel="noopener"
@@ -412,7 +242,7 @@ codesign -d --entitlements :- /path/to/MyApp.app</pre>
            target="_blank" rel="noopener"
            href="https://developer.apple.com/help/account/provisioning-profiles/create-an-ad-hoc-provisioning-profile/">
           <div class="font-semibold">Create an Ad Hoc Profile</div>
-          <div class="text-sm mt-1 text-slate-600 dark:text-slate-400">Limited device distribution.</div>
+          <div class="text-sm mt-1 text-slate-600 dark:text-slate-400">Limited device distribution for testers.</div>
         </a>
         <a class="card p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-blue-50/50 dark:hover:bg-white/5"
            target="_blank" rel="noopener"
@@ -425,53 +255,37 @@ codesign -d --entitlements :- /path/to/MyApp.app</pre>
 
     <!-- Footer -->
     <footer class="mt-20 pt-10 pb-14 text-center text-sm text-slate-500 dark:text-slate-400">
-      <div>Provisioning Profiles &amp; Capabilities — Practical iOS Guide</div>
-      <div class="mt-2">© <span id="year"></span> Mobile Team</div>
+      <div>Provisioning Profiles & Capabilities — A Practical iOS Guide</div>
+      <div class="mt-2">© <span id="year"></span> Mooncascade Mobile Team</div>
     </footer>
-  
-    <section id="qna" class="mt-16 fade-in">
-      <h2 class="text-3xl md:text-4xl font-black tracking-tight">Q&A</h2>
-      <p class="mt-3 text-slate-700 dark:text-slate-300">Questions about profiles, capabilities, or CI setup are welcome. Bring your current project context and we can map it to the correct certificate, profile, and entitlement setup.</p>
-    </section>
-</main>
+  </main>
 
   <script>
-    // Intersection fade-in
-    const observer = new IntersectionObserver((entries)=>{
-      entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('show'); } });
-    }, { threshold: .12 });
-    document.querySelectorAll('.fade-in').forEach(el=>observer.observe(el));
-
-    // Active nav link
-    const links = Array.from(document.querySelectorAll('header nav a[href^="#"]'));
-    const sections = links.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
-    const navObs = new IntersectionObserver((entries)=>{
-      entries.forEach(entry=>{
-        const idx = sections.indexOf(entry.target);
-        if(idx >= 0){
-          const link = links[idx];
-          if(entry.isIntersecting){
-            links.forEach(l=>l.classList.remove('active-link'));
-            link.classList.add('active-link');
-          }
-        }
-      });
-    }, { rootMargin: "-35% 0% -60% 0%"});
-    sections.forEach(s=>navObs.observe(s));
-
-    // Copy buttons
-    document.addEventListener('click', (e)=>{
-      if(e.target.classList.contains('copy-btn')){
-        const pre = e.target.closest('pre');
-        const code = pre.innerText.replace(/^Copy\\s*/,''); // naive copy
-        navigator.clipboard.writeText(code);
-        e.target.textContent = 'Copied';
-        setTimeout(()=> e.target.textContent = 'Copy', 1200);
-      }
+    document.addEventListener('DOMContentLoaded', () => {
+        const observer = new IntersectionObserver((entries)=>{
+            entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('show'); } });
+        }, { threshold: .12 });
+        document.querySelectorAll('.fade-in').forEach(el=>observer.observe(el));
+        
+        const links = Array.from(document.querySelectorAll('header nav a[href^="#"]'));
+        const sections = links.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+        const navObs = new IntersectionObserver((entries)=>{
+            entries.forEach(entry=>{
+                const idx = sections.indexOf(entry.target);
+                if(idx >= 0){
+                    const link = links[idx];
+                    if(entry.isIntersecting){
+                        links.forEach(l=>l.classList.remove('active-link'));
+                        link.classList.add('active-link');
+                    }
+                }
+            });
+        }, { rootMargin: "-35% 0% -60% 0%"});
+        sections.forEach(s=>navObs.observe(s));
+        
+        document.getElementById('year').textContent = new Date().getFullYear();
     });
-
-    // Year
-    document.getElementById('year').textContent = new Date().getFullYear();
   </script>
 </body>
 </html>
+
